@@ -7,22 +7,21 @@ import { ChangeEvent, ChangeEventHandler, useMemo } from 'react';
 
 export default function Search({ placeholder }: { placeholder: string }) {
 	const searchParams = useSearchParams();
-	const handleSearch: ChangeEventHandler<HTMLInputElement> = (event: ChangeEvent<HTMLInputElement>) => {
-		const term = event?.target?.value;
-		const { replace } = useRouter();
+	const { replace } = useRouter();
+	const pathname = usePathname();
+	const handleSearch: ChangeEventHandler<HTMLInputElement> = (event: ChangeEvent<HTMLInputElement>) => 
+		{
+			const term = event?.target?.value;
 
-		const pathname = usePathname();
-		const params = new URLSearchParams(searchParams);
-		if (term) {
-			params.set("query", term);
-		} else {
-			params.delete("query");
+			const params = new URLSearchParams(searchParams);
+			if (term) {
+				params.set("query", term);
+			} else {
+				params.delete("query");
+			}
+			replace(`${pathname}?${params.toString()}`);
 		}
-		replace(`${pathname}?${params.toString()}`);
-	}
-	const urlTerm = useMemo(()=> {
-		return searchParams.get("query")?.toString();
-	}, [searchParams])
+	const urlTerm = searchParams.get("query")?.toString();
   return (
     <div className="relative flex flex-1 flex-shrink-0">
       <label htmlFor="search" className="sr-only">
